@@ -1,0 +1,51 @@
+# Default RGB configuration for the ollama-hook rgb plugin.
+# Copy this file and set plugins.rgb.config_file in ollama-hook.yaml to customize.
+
+# Hardware targets. Multiple entries = same effect applied to each.
+devices:
+  - name: fans
+    index: 0
+    zone: 2
+    size: 9
+
+# OpenRGB server connection.
+openrgb:
+  server_host: localhost
+  server_port: 6742
+  rate_limit_hz: 30
+
+# Named effects. Referenced by event mappings below.
+effects:
+  idle:
+    mode: static
+    color: "#808080"
+  thinking:
+    mode: breathing
+    color: "#FFFFFF"
+  generating:
+    mode: static
+    color: "#7B2FBE"
+    brightness_from: tokens_per_sec
+    brightness_min: 0.3
+    brightness_max: 1.0
+  thinking_tokens:
+    mode: breathing
+    color: "#FFAA00"
+  complete:
+    mode: breathing
+    color: "#00FF00"
+    hold_seconds: response_duration
+    hold_min_seconds: 5.0
+  error:
+    mode: breathing
+    color: "#FF0000"
+    hold_seconds: 5.0
+
+# Event → effect name. Anything unmapped is a no-op.
+events:
+  request_start: thinking
+  token: generating
+  thinking_content: thinking_tokens
+  request_complete: complete
+  error: error
+  idle: idle
